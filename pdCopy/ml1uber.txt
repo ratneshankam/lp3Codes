@@ -1,0 +1,54 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('C:/Users/Ratnesh/OneDrive/Desktop/LP3 Codes/pdCopy/uber.csv')
+
+print(df.head())
+
+print(df.isna().sum())
+
+print(df.fillna(0, inplace=True))
+
+print(df.isna().sum())
+
+plt.figure(figsize=(10, 5))
+sns.boxplot(data=df[['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude']])
+plt.show()
+
+X = df.drop(columns=['key', 'pickup_datetime', 'passenger_count'])
+y = df['passenger_count']
+
+X
+y
+corr=df.corr()
+corr
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+from sklearn.linear_model import LinearRegression
+linear_reg_model = LinearRegression()
+linear_reg_model.fit(X_train, y_train)
+y_pred_linear = linear_reg_model.predict(X_test)
+
+from sklearn.ensemble import RandomForestRegressor
+regr = RandomForestRegressor(max_depth=2, random_state=0)
+regr.fit(X_train, y_train)
+y_pred_rf = regr.predict(X_test)
+
+from sklearn.metrics import r2_score, mean_squared_error
+
+r2_linear = r2_score(y_test, y_pred_linear)
+rmse_linear = np.sqrt(mean_squared_error(y_test, y_pred_linear))
+
+r2_rf = r2_score(y_test, y_pred_rf)
+rmse_rf = np.sqrt(mean_squared_error(y_test, y_pred_rf))
+
+print("Linear Regression - R-squared:", r2_linear)
+print("Linear Regression - RMSE:", rmse_linear)
+print()
+print("Random Forest Regression - R-squared:", r2_rf)
+print("Random Forest Regression - RMSE:", rmse_rf)
+
